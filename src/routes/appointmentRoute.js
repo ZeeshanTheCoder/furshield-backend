@@ -13,13 +13,13 @@ const verifyToken = require("../Middlwares/verifytokenMiddleware.js");
 const router = express.Router();
 
 // POST - Create appointment
-router.post("/", createAppointment);
+router.post("/", verifyToken, createAppointment);
 
 // GET - All appointments
 router.get("/", getAllAppointments);
 
 // GET - Appointments by owner
-router.get("/owner/:ownerId",  getAppointmentsByOwner);
+router.get("/owner", verifyToken, getAppointmentsByOwner);
 
 // GET - Appointments by vet
 router.get("/vet/:vetId", getAppointmentsByVet);

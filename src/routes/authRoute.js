@@ -6,7 +6,7 @@ const route = Router()
 
 route.post('/login',loginuser)
 
-route.get('/logout',logoutuser)
+route.delete('/logout',logoutuser)
 
 
 module.exports=route

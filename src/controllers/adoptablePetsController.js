@@ -1,29 +1,46 @@
 // controllers/adoptablePetController.js
 const adoptablePetModel = require("../models/adoptablePetSchema.js");
+const imagekit = require("../Utils/imagekit.utils.js");
 
 // ✅ Create an adoptable pet
 const createAdoptablePet = async (req, res) => {
-    try {
-        const { name, breed, age, healthStatus, images, shelterId } = req.body;
+  try {
+    const { name, breed, age, healthStatus } = req.body;
+    const id = req.user.id; // verifyToken middleware se aa raha hai
 
-        if (!name || !breed || !age || !healthStatus || !shelterId) {
-            return res.status(400).json({ message: "All required fields must be provided" });
-        }
-
-        const pet = await adoptablePetModel.create({
-            name,
-            breed,
-            age,
-            healthStatus,
-            images,
-            shelterId
-        });
-
-        return res.status(201).json({ message: "Adoptable pet added successfully", pet });
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: error.message });
+    if (!name || !breed || !age || !healthStatus) {
+      return res
+        .status(400)
+        .json({ message: "All required fields must be provided" });
     }
+
+    let imageUrl = "";
+    if (req.file) {
+      // multer se file aayi hai
+      const uploadedImage = await imagekit.upload({
+        file: req.file.buffer, // buffer from multer.memoryStorage
+        fileName: req.file.originalname,
+        folder: "adoptablePets", // optional folder
+      });
+      imageUrl = uploadedImage.url;
+    }
+
+    const pet = await adoptablePetModel.create({
+      name,
+      breed,
+      age,
+      healthStatus,
+      images: imageUrl ? [imageUrl] : [],
+      shelterId: id,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Adoptable pet added successfully", pet });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 // ✅ Get all adoptable pets (with filters)

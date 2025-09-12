@@ -10,9 +10,11 @@ const {
     addCareLog,
     updateAdoptionStatus
 } = require("../controllers/adoptablePetsController.js");
+const verifyToken = require("../Middlwares/verifytokenMiddleware.js");
+const upload = require("../Middlwares/Upload.js");
 
 // Create adoptable pet
-router.post("/", createAdoptablePet);
+router.post("/createadoptable", verifyToken, upload.single("image"), createAdoptablePet);
 
 // Get all adoptable pets (with filters)
 router.get("/", getAdoptablePets);
