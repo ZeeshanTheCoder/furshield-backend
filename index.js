@@ -17,6 +17,7 @@ const reviewAndRatingRoute = require("./src/routes/reviewAndRatingRoute.js");
 const treatmentLogRoute = require("./src/routes/treatmentLogRoute.js");
 const vetRoute = require("./src/routes/vetRoute.js");
 const cors = require("cors");
+const feedbackroute = require("./src/routes/feedbackRoute.js");
 
 configDotenv();
 db_Connection();
@@ -49,5 +50,6 @@ app.use("/notifications", notificationRoute);
 app.use("/reviews-rating", reviewAndRatingRoute);
 app.use("/treatment", treatmentLogRoute);
 app.use("/vet", vetRoute);
+app.use("/ai", feedbackroute);
 
 app.listen(PORT, () => console.log(`Server Is Running On Port No:${PORT}`));

@@ -7,6 +7,7 @@ const {
   updateAppointment,
   updateAppointmentStatus,
   deleteAppointment,
+  getAppointmentById,
 } = require("../controllers/appointmentController.js");
 const verifyToken = require("../Middlwares/verifytokenMiddleware.js");
 
@@ -21,14 +22,17 @@ router.get("/", getAllAppointments);
 // GET - Appointments by owner
 router.get("/owner", verifyToken, getAppointmentsByOwner);
 
+// GET - Single appointment by ID
+router.get("/:appointmentId", verifyToken, getAppointmentById);
+
 // GET - Appointments by vet
-router.get("/vet/:vetId", getAppointmentsByVet);
+router.get("/vet", verifyToken, getAppointmentsByVet);
 
 // PUT - Update appointment details
 router.put("/:appointmentId", updateAppointment);
 
 // PATCH - Update only status
-router.patch("/:appointmentId/status", updateAppointmentStatus);
+router.patch("/:appointmentId/status", verifyToken, updateAppointmentStatus);
 
 // DELETE - Delete appointment
 router.delete("/:appointmentId", deleteAppointment);

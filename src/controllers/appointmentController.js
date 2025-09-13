@@ -1,5 +1,6 @@
 const appointmentModel = require("../models/appointmentSchema.js");
 const mongoose = require("mongoose");
+const vetModel = require("../models/vetSchema.js");
 
 // ✅ Create Appointment
 const createAppointment = async (req, res) => {
@@ -68,7 +69,14 @@ const getAppointmentsByOwner = async (req, res) => {
     const appointments = await appointmentModel
       .find({ ownerId })
       .populate("petId", "name species breed")
-      .populate("vetId", "name email specialization");
+      .populate({
+        path: "vetId",
+        select: "specialization",
+        populate: {
+          path: "userId",
+          select: "name email specialization",
+        },
+      });
 
     return res.status(200).json(appointments);
   } catch (error) {
@@ -80,11 +88,25 @@ const getAppointmentsByOwner = async (req, res) => {
 // ✅ Get Appointments by Vet
 const getAppointmentsByVet = async (req, res) => {
   try {
-    const { vetId } = req.params;
+    // const vetId = req.user.id;
+
+    const vet = await vetModel.findOne({ userId: req.user.id });
+
+    if (!vet) {
+      return res.status(404).json({ message: "Vet profile not found" });
+    }
     const appointments = await appointmentModel
-      .find({ vetId })
+      .find({ vetId: vet._id })
       .populate("petId", "name species breed")
-      .populate("ownerId", "name email");
+      .populate("ownerId", "name email")
+      .populate({
+        path: "vetId",
+        populate: {
+          path: "userId",
+          select: "name email",
+        },
+        select: "specialization userId",
+      });
 
     return res.status(200).json(appointments);
   } catch (error) {
@@ -119,23 +141,39 @@ const updateAppointment = async (req, res) => {
 };
 
 // ✅ Update Appointment Status
+// PATCH /appointment/:appointmentId/status
 const updateAppointmentStatus = async (req, res) => {
   try {
     const { appointmentId } = req.params;
     const { status } = req.body;
 
-    if (!["pending", "approved", "rescheduled", "completed"].includes(status)) {
+    // Allowed statuses for Vet
+    const allowedStatuses = ["pending", "approved", "rescheduled", "completed", "cancelled"];
+
+    if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    const appointment = await appointmentModel.findByIdAndUpdate(
-      appointmentId,
+    // Vet check (optional but recommended 👇)
+    if (req.user.role !== "vet") {
+      return res.status(403).json({ message: "Only vets can update appointment status" });
+    }
+
+    // Get vet profile
+    const vet = await vetModel.findOne({ userId: req.user.id });
+    if (!vet) {
+      return res.status(404).json({ message: "Vet profile not found" });
+    }
+
+    // Find appointment only for this vet
+    const appointment = await appointmentModel.findOneAndUpdate(
+      { _id: appointmentId, vetId: vet._id }, // ensure this vet owns it
       { status },
       { new: true }
     );
 
     if (!appointment) {
-      return res.status(404).json({ message: "Appointment not found" });
+      return res.status(404).json({ message: "Appointment not found or not assigned to this vet" });
     }
 
     return res.status(200).json({
@@ -147,6 +185,28 @@ const updateAppointmentStatus = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const getAppointmentById = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+
+    const appointment = await appointmentModel
+      .findById(appointmentId)
+      .populate("petId", "name species breed")
+      .populate("ownerId", "name email")
+      .populate("vetId", "name email specialization");
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    return res.status(200).json(appointment);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 // ✅ Delete Appointment
 const deleteAppointment = async (req, res) => {
@@ -176,4 +236,5 @@ module.exports = {
   updateAppointment,
   updateAppointmentStatus,
   deleteAppointment,
+  getAppointmentById
 };
