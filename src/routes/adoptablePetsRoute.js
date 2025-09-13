@@ -17,7 +17,7 @@ const upload = require("../Middlwares/Upload.js");
 router.post("/createadoptable", verifyToken, upload.single("image"), createAdoptablePet);
 
 // Get all adoptable pets (with filters)
-router.get("/", getAdoptablePets);
+router.get("/getadoptable", getAdoptablePets);
 
 // Get single adoptable pet
 router.get("/:id", getAdoptablePetById);

@@ -45,22 +45,18 @@ const createAdoptablePet = async (req, res) => {
 
 // ✅ Get all adoptable pets (with filters)
 const getAdoptablePets = async (req, res) => {
-    try {
-        const { breed, isAdopted } = req.query;
-        let filter = {};
+  try {
+const pets = await adoptablePetModel.find().populate("shelterId", "name email contactNumber address");
 
-        if (breed) filter.breed = breed;
-        if (isAdopted !== undefined) filter.isAdopted = isAdopted === "true";
-
-        const pets = await adoptablePetModel.find(filter).populate("shelterId");
-
-        return res.status(200).json({ count: pets.length, pets });
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: error.message });
-    }
+    return res.status(200).json({
+      count: pets.length,
+      pets,
+    });
+  } catch (error) {
+    console.error("Error in getAdoptablePets:", error.message);
+    return res.status(500).json({ message: error.message });
+  }
 };
-
 // ✅ Get single adoptable pet
 const getAdoptablePetById = async (req, res) => {
     try {

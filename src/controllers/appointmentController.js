@@ -6,8 +6,9 @@ const vetModel = require("../models/vetSchema.js");
 const createAppointment = async (req, res) => {
   try {
     const { petId, vetId, date, time, reason, notes } = req.body;
+    console.log(req.body);
 
-    if (!petId || !vetId || !date || !time || !reason) {
+    if (!petId || !date || !time || !reason) {
       return res
         .status(400)
         .json({ message: "All required fields must be provided" });
@@ -88,9 +89,12 @@ const getAppointmentsByOwner = async (req, res) => {
 // ✅ Get Appointments by Vet
 const getAppointmentsByVet = async (req, res) => {
   try {
-    // const vetId = req.user.id;
+    const vetId = req.user.id;
+    console.log("vetid", vetId);
 
     const vet = await vetModel.findOne({ userId: req.user.id });
+
+    console.log("uservet", vet);
 
     if (!vet) {
       return res.status(404).json({ message: "Vet profile not found" });
@@ -148,7 +152,13 @@ const updateAppointmentStatus = async (req, res) => {
     const { status } = req.body;
 
     // Allowed statuses for Vet
-    const allowedStatuses = ["pending", "approved", "rescheduled", "completed", "cancelled"];
+    const allowedStatuses = [
+      "pending",
+      "approved",
+      "rescheduled",
+      "completed",
+      "cancelled",
+    ];
 
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
@@ -156,7 +166,9 @@ const updateAppointmentStatus = async (req, res) => {
 
     // Vet check (optional but recommended 👇)
     if (req.user.role !== "vet") {
-      return res.status(403).json({ message: "Only vets can update appointment status" });
+      return res
+        .status(403)
+        .json({ message: "Only vets can update appointment status" });
     }
 
     // Get vet profile
@@ -173,7 +185,9 @@ const updateAppointmentStatus = async (req, res) => {
     );
 
     if (!appointment) {
-      return res.status(404).json({ message: "Appointment not found or not assigned to this vet" });
+      return res
+        .status(404)
+        .json({ message: "Appointment not found or not assigned to this vet" });
     }
 
     return res.status(200).json({
@@ -207,7 +221,6 @@ const getAppointmentById = async (req, res) => {
   }
 };
 
-
 // ✅ Delete Appointment
 const deleteAppointment = async (req, res) => {
   try {
@@ -236,5 +249,5 @@ module.exports = {
   updateAppointment,
   updateAppointmentStatus,
   deleteAppointment,
-  getAppointmentById
+  getAppointmentById,
 };

@@ -41,7 +41,7 @@ const getProducts = async (req, res) => {
             if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
         }
         if (search) {
-            filter.name = { $regex: search, $options: "i" }; // case-insensitive search
+            filter.name = { $regex: search, $options: "i" }; 
         }
 
         const products = await productModel.find(filter);

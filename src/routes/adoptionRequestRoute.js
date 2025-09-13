@@ -1,27 +1,20 @@
 const express = require("express");
 const {
-    createAdoptionRequest,
-    getAllAdoptionRequests,
-    getShelterRequests,
-    updateRequestStatus,
-    deleteAdoptionRequest
-} = require("../controllers/adoptionRequestController.js");
+  createAdoptionRequest,
+  updateAdoptionStatus,
+  getShelterRequests,
+} = require("../controllers/adoptionRequestController");
+const verifytoken = require("../Middlwares/verifytokenMiddleware");
 
 const router = express.Router();
 
 // POST - Create adoption request
-router.post("/", createAdoptionRequest);
-
-// GET - All adoption requests
-router.get("/", getAllAdoptionRequests);
-
-// GET - Requests for specific shelter
-router.get("/shelter/:shelterId", getShelterRequests);
+router.post("/createadoptionrequest", verifytoken, createAdoptionRequest);
 
 // PUT - Update adoption request status (approve/reject)
-router.put("/:requestId", updateRequestStatus);
+router.put("/updateadoptionrequest/:requestId", verifytoken, updateAdoptionStatus);
 
-// DELETE - Delete adoption request
-router.delete("/:requestId", deleteAdoptionRequest);
+// GET - Shelter Dashboard (all requests for this shelter)
+router.get("/shelter/requests", verifytoken, getShelterRequests);
 
 module.exports = router;

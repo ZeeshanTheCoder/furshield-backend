@@ -23,18 +23,18 @@ router.get("/", getAllAppointments);
 router.get("/owner", verifyToken, getAppointmentsByOwner);
 
 // GET - Single appointment by ID
-router.get("/:appointmentId", verifyToken, getAppointmentById);
+router.get("/vet/:appointmentId", verifyToken, getAppointmentById);
 
 // GET - Appointments by vet
-router.get("/vet", verifyToken, getAppointmentsByVet);
+router.get("/user_vet", verifyToken, getAppointmentsByVet);
 
 // PUT - Update appointment details
 router.put("/:appointmentId", updateAppointment);
 
 // PATCH - Update only status
-router.patch("/:appointmentId/status", verifyToken, updateAppointmentStatus);
+router.patch("/vet/:appointmentId/status", verifyToken, updateAppointmentStatus);
 
 // DELETE - Delete appointment
-router.delete("/:appointmentId", deleteAppointment);
+router.delete("/vet/:appointmentId", deleteAppointment);
 
 module.exports = router;

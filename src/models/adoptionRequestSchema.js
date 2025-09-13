@@ -13,7 +13,7 @@ const adoptionRequestSchema = new mongoose.Schema({
     },
     shelterId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Shelter',
+        ref: 'User',
         required: true
     },
     status: {
