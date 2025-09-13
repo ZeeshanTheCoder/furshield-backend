@@ -6,10 +6,9 @@ const ratingSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    targetId: { type: mongoose.Schema.Types.ObjectId, required: true }, // vetId / productId / shelterId
-    targetType: {
-        type: String,
-        enum: ['vet', 'product', 'shelter'],
+     productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Product',
         required: true
     },
     rating: {
@@ -19,6 +18,7 @@ const ratingSchema = new mongoose.Schema({
         required: true
     },
     comment: String,
+
 }, { timestamps: true });
 
 // Index for faster lookup

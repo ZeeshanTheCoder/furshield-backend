@@ -6,7 +6,6 @@ const vetModel = require("../models/vetSchema.js");
 const createAppointment = async (req, res) => {
   try {
     const { petId, vetId, date, time, reason, notes } = req.body;
-    console.log(req.body);
 
     if (!petId || !date || !time || !reason) {
       return res
@@ -90,11 +89,8 @@ const getAppointmentsByOwner = async (req, res) => {
 const getAppointmentsByVet = async (req, res) => {
   try {
     const vetId = req.user.id;
-    console.log("vetid", vetId);
 
     const vet = await vetModel.findOne({ userId: req.user.id });
-
-    console.log("uservet", vet);
 
     if (!vet) {
       return res.status(404).json({ message: "Vet profile not found" });

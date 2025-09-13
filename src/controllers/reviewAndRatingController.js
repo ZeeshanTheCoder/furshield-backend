@@ -3,24 +3,24 @@ const reviewsAndRatingModel = require("../models/reviewsAndRatingSchema.js");
 // ⭐ Create a review/rating
 const createReview = async (req, res) => {
     try {
-        const { userId, targetId, targetType, rating, comment } = req.body;
+        const userId = req.user.id
+        const {productId, rating, comment } = req.body;
 
-        if (!userId || !targetId || !targetType || !rating) {
+        if (!userId || !rating) {
             return res.status(400).json({ message: "All required fields must be provided" });
         }
 
         // Check if user already rated this target
-        const existingReview = await reviewsAndRatingModel.findOne({ userId, targetId, targetType });
+        const existingReview = await reviewsAndRatingModel.findOne({ userId });
         if (existingReview) {
-            return res.status(400).json({ message: "You have already reviewed this " + targetType });
+            return res.status(400).json({ message: "You have already reviewed this " });
         }
 
         const review = await reviewsAndRatingModel.create({
             userId,
-            targetId,
-            targetType,
             rating,
-            comment
+            comment,
+            productId
         });
 
         res.status(201).json({ message: "Review created successfully", review });
@@ -28,6 +28,35 @@ const createReview = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+const mongoose = require("mongoose");
+
+// GET: User ka apna review ek product ke liye
+const getUserProductReview = async (req, res) => {
+  try {
+    const userId = req.user.id; // verifytoken se
+    const { productId } = req.query; // query param
+
+    if (!productId) {
+      return res.status(400).json({ message: "productId required he" });
+    }
+
+    const review = await reviewsAndRatingModel
+      .findOne({ userId, productId })
+      .populate("userId", "name email"); // user ka data bhi le lo
+
+    if (!review) {
+      return res.status(200).json({ reviews: [] }); // empty array bhej do
+    }
+
+    // ek review milega, array ke form me bhej rahe hain
+    res.status(200).json({ reviews: [review] });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 // ✏️ Update a review
 const updateReview = async (req, res) => {
@@ -105,5 +134,6 @@ module.exports = {
     updateReview,
     deleteReview,
     getReviewsForTarget,
-    getAverageRating
+    getAverageRating,
+    getUserProductReview
 };

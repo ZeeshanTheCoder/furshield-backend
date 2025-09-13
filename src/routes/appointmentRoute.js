@@ -29,7 +29,7 @@ router.get("/vet/:appointmentId", verifyToken, getAppointmentById);
 router.get("/user_vet", verifyToken, getAppointmentsByVet);
 
 // PUT - Update appointment details
-router.put("/:appointmentId", updateAppointment);
+router.put("/vet/:appointmentId", updateAppointment);
 
 // PATCH - Update only status
 router.patch("/vet/:appointmentId/status", verifyToken, updateAppointmentStatus);
