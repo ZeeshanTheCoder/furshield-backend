@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { feedbackcontroller } = require("../controllers/FeedbackController.JS");
+const { feedbackcontroller } = require("../controllers/FeedbackController");
 
 const feedbackroute = Router();
 
