@@ -28,10 +28,12 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigin = process.env.FRONTEND_URL;
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // Only allow your Vite dev server
-    credentials: true, // If you use cookies/auth headers
+    origin: allowedOrigin,
+    credentials: true,
   })
 );
 
