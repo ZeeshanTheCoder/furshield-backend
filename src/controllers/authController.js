@@ -41,11 +41,11 @@ const loginuser = async (req, res) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction, // true in prod
-      sameSite: "None", // cross-site allowed
-      domain: isProduction ? ".onrender.com" : undefined, // 👈 Set backend domain in production
+      secure: isProduction, // true in live (HTTPS)
+      sameSite: isProduction ? "None" : "Lax", // None in live, Lax in dev
+      domain: isProduction ? "furshield-backend-rnqw.onrender.com" : undefined,
       path: "/",
-      maxAge: 60 * 60 * 1000,
+      maxAge: 60 * 60 * 1000, // 1 hour
     });
 
     // 5. Return success response
