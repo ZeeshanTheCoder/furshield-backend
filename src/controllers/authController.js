@@ -40,7 +40,7 @@ const loginuser = async (req, res) => {
         );
         res.cookie("token", token, {
             httpOnly: true,       // cannot be accessed by JavaScript (secure against XSS)
-            secure: false, // true in production (HTTPS)
+            secure: true, // true in production (HTTPS)
             sameSite: "Lax",   // CSRF protection
             maxAge: 60 * 60 * 1000 // 1 hour in ms
         });

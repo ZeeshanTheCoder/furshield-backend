@@ -1,32 +1,48 @@
 // controllers/productController.js
 const productModel = require("../models/productSchema.js");
+const imagekit = require("../Utils/imagekit.utils.js");
 
 const createProduct = async (req, res) => {
-    try {
-        const { name, category, price, description, image, stock } = req.body;
+  try {
+    const { name, category, price, description, stock } = req.body;
 
-        if (!name || !category || !price) {
-            return res.status(400).json({ message: "Name, category, and price are required" });
-        }
-
-        const product = await productModel.create({
-            name,
-            category,
-            price,
-            description,
-            image,
-            stock
-        });
-
-        return res.status(201).json({
-            message: "Product created successfully",
-            product
-        });
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: error.message });
+    if (!name || !category || !price) {
+      return res.status(400).json({
+        message: "Name, category, and price are required",
+      });
     }
+
+    let imageUrl = null;
+
+    // Agar image aayi hai to ImageKit pe upload karo
+    if (req.file) {
+      const uploadResponse = await imagekit.upload({
+        file: req.file.buffer, // multer se buffer milega
+        fileName: req.file.originalname,
+        folder: "products", // optional: ImageKit folder
+      });
+      imageUrl = uploadResponse.url;
+    }
+
+    const product = await productModel.create({
+      name,
+      category,
+      price,
+      description,
+      stock,
+      image: imageUrl, // image URL save hoga db me
+    });
+
+    return res.status(201).json({
+      message: "Product created successfully",
+      product,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: error.message });
+  }
 };
+
 
 const getProducts = async (req, res) => {
     try {

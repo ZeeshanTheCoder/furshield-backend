@@ -8,8 +8,9 @@ const {
     updateProduct,
     deleteProduct
 } = require("../controllers/productController.js");
+const upload = require("../Middlwares/Upload.js");
 
-router.post("/", createProduct);
+router.post("/createproduct", upload.single("image"), createProduct);
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 router.put("/:id", updateProduct);

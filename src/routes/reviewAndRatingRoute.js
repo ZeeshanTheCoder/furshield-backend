@@ -6,7 +6,8 @@ const {
     deleteReview,
     getReviewsForTarget,
     getAverageRating,
-    getUserProductReview
+    getUserProductReview,
+    getAllProductReviews
 } = require("../controllers/reviewAndRatingController.js");
 
 const verifytoken = require('../Middlwares/verifytokenMiddleware.js')
@@ -16,6 +17,7 @@ router.post("/createreview", verifytoken, createReview);
 
 router.get("/productreview", verifytoken, getUserProductReview);
 
+router.get("/allProductReview", getAllProductReviews);
 
 // Update review
 
