@@ -54,10 +54,14 @@ const loginuser = async (req, res) => {
       isLogin: true,
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        contactNumber: user.contactNumber,
+        address: user.address,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     });
   } catch (error) {
