@@ -41,7 +41,7 @@ const loginuser = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,       // cannot be accessed by JavaScript (secure against XSS)
             secure: true, // true in production (HTTPS)
-            sameSite: "Lax",   // CSRF protection
+            sameSite: "None",   // CSRF protection
             maxAge: 60 * 60 * 1000 // 1 hour in ms
         });
 
@@ -83,8 +83,8 @@ const logoutuser = async (req, res) => {
         // clear the cookie
         res.clearCookie("token", {
             httpOnly: true,
-            secure: false,
-            sameSite: "Lax"
+            secure: true,
+            sameSite: "None"
         });
 
         return res.status(200).json({
