@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userSchema");
+const isProduction = process.env.NODE_ENV === "production";
 
 const loginuser = async (req, res) => {
     try {
@@ -40,7 +41,7 @@ const loginuser = async (req, res) => {
         );
         res.cookie("token", token, {
             httpOnly: true,       // cannot be accessed by JavaScript (secure against XSS)
-            secure: false, // true in production (HTTPS)
+            secure: isProduction, // true in production (HTTPS)
             sameSite: "None",   // CSRF protection
             maxAge: 60 * 60 * 1000 // 1 hour in ms
         });
@@ -83,7 +84,7 @@ const logoutuser = async (req, res) => {
         // clear the cookie
         res.clearCookie("token", {
             httpOnly: true,
-            secure: false,
+            secure: isProduction,
             sameSite: "None"
         });
 
