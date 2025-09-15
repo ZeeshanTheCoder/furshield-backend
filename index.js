@@ -37,6 +37,16 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Expose-Headers", "Set-Cookie"); 
+  next();
+});
+
 // routes
 app.use("/user", userRouter);
 app.use("/auth", route);
@@ -53,7 +63,5 @@ app.use("/reviews-rating", reviewAndRatingRoute);
 app.use("/treatment", treatmentLogRoute);
 app.use("/vet", vetRoute);
 app.use("/ai", feedbackroute);
-
-
 
 app.listen(PORT, () => console.log(`Server Is Running On Port No:${PORT}`));
