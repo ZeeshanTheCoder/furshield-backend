@@ -3,7 +3,15 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    let token = req.cookies.token;
+
+    if (
+      !token &&
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer ")
+    ) {
+      token = req.headers.authorization.split(" ")[1]; // Get token from "Bearer <token>"
+    }
 
     if (!token) {
       return res.status(401).json({
