@@ -43,7 +43,7 @@ const loginuser = async (req, res) => {
       httpOnly: true,
       secure: isProduction, // true in live (HTTPS)
       sameSite: isProduction ? "None" : "Lax", // None in live, Lax in dev
-      domain: isProduction ? "furshield-backend-rnqw.onrender.com" : undefined,
+      // domain: isProduction ? "furshield-backend-rnqw.onrender.com" : undefined,
       path: "/",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
