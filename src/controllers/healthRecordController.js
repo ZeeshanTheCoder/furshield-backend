@@ -1,6 +1,7 @@
 // controllers/healthRecordController.js
 const healthRecordModel = require("../models/healthRecordSchema.js");
 const imagekit = require("../Utils/imagekit.utils");
+const PDFDocument = require("pdfkit");
 
 const createHealthRecord = async (req, res) => {
   try {
@@ -52,12 +53,12 @@ const createHealthRecord = async (req, res) => {
       }
     }
 
-     let insuranceData = {};
+    let insuranceData = {};
     if (insurance) {
       insuranceData = {
         provider: insurance, // Store string in provider
         policyNo: "",
-        docs: []
+        docs: [],
       };
     }
 
@@ -162,7 +163,7 @@ const updateHealthRecord = async (req, res) => {
       updates.insurance = {
         provider: updates.insurance,
         policyNo: "",
-        docs: []
+        docs: [],
       };
     }
 
@@ -230,9 +231,48 @@ const getHealthRecordById = async (req, res) => {
   }
 };
 
+const downloadHealthRecord = async (req, res) => {
+  try {
+    const { recordId } = req.params;
+    const record = await healthRecordModel.findById(recordId);
+
+    if (!record) {
+      return res.status(404).json({ message: "Record not found" });
+    }
+
+    // ✅ Generate PDF
+    const doc = new PDFDocument();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=HealthRecord_${recordId}.pdf`
+    );
+
+    doc.fontSize(20).text("🐾 Pet Health Record", { align: "center" });
+    doc.moveDown();
+    doc.text(`Allergies: ${record.allergies?.join(", ") || "None"}`);
+    doc.text(`Illnesses: ${record.illnesses?.join(", ") || "None"}`);
+    doc.text(
+      `Vaccinations: ${
+        record.vaccinations?.map((v) => v.name).join(", ") || "None"
+      }`
+    );
+    doc.text(`Insurance: ${record.insurance?.provider || "N/A"}`);
+    doc.text(`Notes: ${record.notes || "No additional notes"}`);
+
+    // Pipe PDF to response BEFORE calling .end()
+    doc.pipe(res);
+    doc.end();
+  } catch (error) {
+    console.error("Download Error:", error);
+    res.status(500).json({ message: "Server error generating record PDF." });
+  }
+};
+
 module.exports = {
   createHealthRecord,
   updateHealthRecord,
   getHealthRecordsByPet,
   getHealthRecordById,
+  downloadHealthRecord,
 };

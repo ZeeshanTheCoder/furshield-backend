@@ -6,6 +6,7 @@ const {
   updateHealthRecord,
   getHealthRecordById,
   getHealthRecordsByPet,
+  downloadHealthRecord,
 } = require("../controllers/healthRecordController");
 const upload = require("../Middlwares/Upload");
 const healthrecordRouter = express.Router();
@@ -34,5 +35,8 @@ healthrecordRouter.get(
   verifyToken,
   getHealthRecordsByPet
 );
+
+// Download health record pdf file
+healthrecordRouter.get("/download/:recordId", verifyToken, downloadHealthRecord);
 
 module.exports = healthrecordRouter;

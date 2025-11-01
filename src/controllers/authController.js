@@ -88,7 +88,7 @@ const logoutuser = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "None",
+      sameSite: isProduction ? "None" : "Lax", // None in live, Lax in dev
     });
 
     return res.status(200).json({
