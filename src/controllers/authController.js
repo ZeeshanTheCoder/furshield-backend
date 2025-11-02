@@ -42,7 +42,7 @@ const loginuser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction, // true in live (HTTPS)
-      sameSite: isProduction ? "None" : "Lax", // None in live, Lax in dev
+      sameSite: "Lax", // None in live, Lax in dev
       // domain: isProduction ? "furshield-backend-rnqw.onrender.com" : undefined,
       path: "/",
       maxAge: 60 * 60 * 1000, // 1 hour
