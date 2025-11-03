@@ -12,7 +12,7 @@ const createHealthRecord = async (req, res) => {
       return res.status(400).json({ message: "Pet ID is required" });
     }
 
-    // ✅ Parse JSON strings back to arrays/objects
+    //    Parse JSON strings back to arrays/objects
     let parsedVaccinations = [];
     if (vaccinations) {
       try {
@@ -62,7 +62,7 @@ const createHealthRecord = async (req, res) => {
       };
     }
 
-    // ✅ Handle uploaded files
+    //    Handle uploaded files
     let documentUrls = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
@@ -72,7 +72,7 @@ const createHealthRecord = async (req, res) => {
             fileName: file.originalname,
             folder: "/health-records",
           });
-          documentUrls.push(uploaded.url); // ✅ Save string URL, not object
+          documentUrls.push(uploaded.url); //    Save string URL, not object
         } catch (uploadError) {
           console.error("ImageKit Upload Error:", uploadError.message);
           return res.status(500).json({ message: "File upload failed" });
@@ -86,7 +86,7 @@ const createHealthRecord = async (req, res) => {
       allergies: parsedAllergies,
       illnesses: parsedIllnesses,
       treatments: parsedTreatments,
-      documents: documentUrls, // ✅ Match schema: [String]
+      documents: documentUrls, //    Match schema: [String]
       insurance: insuranceData,
     });
 
@@ -100,13 +100,13 @@ const createHealthRecord = async (req, res) => {
   }
 };
 
-// ✅ Update Health Record
+//    Update Health Record
 const updateHealthRecord = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = { ...req.body }; // 👈 Create a copy to modify
 
-    // ✅ Parse JSON fields just like in createHealthRecord
+    //    Parse JSON fields just like in createHealthRecord
     if (updates.vaccinations) {
       try {
         updates.vaccinations = JSON.parse(updates.vaccinations);
@@ -139,7 +139,7 @@ const updateHealthRecord = async (req, res) => {
       }
     }
 
-    // ✅ Handle uploaded files for update
+    //    Handle uploaded files for update
     if (req.files && req.files.length > 0) {
       let documentUrls = [];
       for (const file of req.files) {
@@ -155,10 +155,10 @@ const updateHealthRecord = async (req, res) => {
           return res.status(500).json({ message: "File upload failed" });
         }
       }
-      updates.documents = documentUrls; // ✅ Replace documents
+      updates.documents = documentUrls; //    Replace documents
     }
 
-    // ✅ Handle insurance
+    //    Handle insurance
     if (updates.insurance) {
       updates.insurance = {
         provider: updates.insurance,
@@ -187,13 +187,13 @@ const updateHealthRecord = async (req, res) => {
   }
 };
 
-// ✅ View All Health Records for a Pet
-// ✅ View All Health Records for a Pet
+//    View All Health Records for a Pet
+//    View All Health Records for a Pet
 const getHealthRecordsByPet = async (req, res) => {
   try {
-    const { petId } = req.params; // ✅ This was missing!
+    const { petId } = req.params; //    This was missing!
     console.log(
-      "✅ getHealthRecordsByPet called with petId:",
+      "   getHealthRecordsByPet called with petId:",
       req.params.petId
     );
 
@@ -212,7 +212,7 @@ const getHealthRecordsByPet = async (req, res) => {
   }
 };
 
-// ✅ View Single Health Record
+//    View Single Health Record
 const getHealthRecordById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -240,7 +240,7 @@ const downloadHealthRecord = async (req, res) => {
       return res.status(404).json({ message: "Record not found" });
     }
 
-    // ✅ Generate PDF
+    //    Generate PDF
     const doc = new PDFDocument();
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
@@ -248,7 +248,7 @@ const downloadHealthRecord = async (req, res) => {
       `attachment; filename=HealthRecord_${recordId}.pdf`
     );
 
-    doc.fontSize(20).text("🐾 Pet Health Record", { align: "center" });
+    doc.fontSize(20).text("Pet Health Record", { align: "center" });
     doc.moveDown();
     doc.text(`Allergies: ${record.allergies?.join(", ") || "None"}`);
     doc.text(`Illnesses: ${record.illnesses?.join(", ") || "None"}`);
